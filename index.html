@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Just For You</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Tangerine:wght@700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  height:100vh;
+  font-family:'Poppins',sans-serif;
+  background:url('https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9') center/cover no-repeat;
+  overflow:hidden;
+}
+
+/* Blur */
+.bg-blur{
+  position:absolute;
+  inset:0;
+  backdrop-filter:blur(8px);
+}
+
+/* Pink paper */
+.paper{
+  position:absolute;
+  inset:0;
+  z-index:5;
+}
+
+.paper .half{
+  position:absolute;
+  width:50%;
+  height:100%;
+  background:#f6b1c3;
+  transition:1.2s ease;
+}
+
+.left{left:0}
+.right{right:0}
+
+.paper.split .left{transform:translateX(-100%)}
+.paper.split .right{transform:translateX(100%)}
+
+/* Selector */
+.selector{
+  position:absolute;
+  inset:0;
+  z-index:10;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+}
+
+.selector h1{
+  font-family:'Tangerine',cursive;
+  font-size:46px;
+  margin-bottom:25px;
+}
+
+/* Song list */
+.song-list{
+  width:90%;
+  max-width:420px;
+}
+
+.song{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px;
+  border-radius:10px;
+  margin-bottom:10px;
+  background:rgba(255,255,255,0.12);
+  cursor:pointer;
+}
+
+.song img{
+  width:45px;
+  height:45px;
+  border-radius:6px;
+  object-fit:cover;
+}
+
+.song span{
+  font-size:14px;
+  flex:1;
+}
+
+.play{
+  width:0;
+  height:0;
+  border-left:10px solid white;
+  border-top:6px solid transparent;
+  border-bottom:6px solid transparent;
+  animation:pulse 1.2s infinite;
+}
+
+@keyframes pulse{
+  0%{opacity:.3}
+  50%{opacity:1}
+  100%{opacity:.3}
+}
+
+/* Reveal */
+.reveal{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  z-index:1;
+  transition:1s ease;
+}
+
+.reveal.show{opacity:1}
+
+.reveal h2{
+  font-family:'Tangerine',cursive;
+  font-size:64px;
+  color:#ff4f8b;
+  background:rgba(255,182,193,0.45);
+  padding:10px 22px;
+  border-radius:14px;
+  margin-bottom:12px;
+  animation:fadeUp 1.2s ease;
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.reveal p{
+  font-size:14px;
+  opacity:.8;
+}
+
+/* Now playing */
+.now-playing{
+  position:fixed;
+  bottom:12px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:12px;
+  opacity:0.75;
+  color:#fff;
+  z-index:20;
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg-blur"></div>
+
+<!-- Pink paper -->
+<div class="paper" id="paper">
+  <div class="half left"></div>
+  <div class="half right"></div>
+
+  <div class="selector">
+    <h1>Click any one song my dear 🫶</h1>
+
+    <div class="song-list">
+
+      <div class="song" onclick="openPaper(0)">
+        <img src="images/image1.jpg">
+        <span>1. Line Without a Hook – Ricky Montgomery</span>
+        <div class="play"></div>
+      </div>
+
+      <div class="song" onclick="openPaper(1)">
+        <img src="images/image2.jpg">
+        <span>2. I Wanna Be Yours – Arctic Monkeys</span>
+        <div class="play"></div>
+      </div>
+
+      <div class="song" onclick="openPaper(2)">
+        <img src="images/image3.jpg">
+        <span>3. I Think They Call This Love – Matthew Ifield</span>
+        <div class="play"></div>
+      </div>
+
+      <div class="song" onclick="openPaper(3)">
+        <img src="images/image4.jpg">
+        <span>4. Sailor Song – Gigi Perez</span>
+        <div class="play"></div>
+      </div>
+
+      <div class="song" onclick="openPaper(4)">
+        <img src="images/image5.jpg">
+        <span>5. Golden Brown – The Stranglers</span>
+        <div class="play"></div>
+      </div>
+
+      <div class="song" onclick="openPaper(5)">
+        <img src="images/image6.jpg">
+        <span>6. CO2 – Prateek Kuhad</span>
+        <div class="play"></div>
+      </div>
+
+      <div class="song" onclick="openPaper(6)">
+        <img src="images/image7.jpg">
+        <span>7. Until I Found You – Stephen Sanchez</span>
+        <div class="play"></div>
+      </div>
+
+      <div class="song" onclick="openPaper(7)">
+        <img src="images/image8.jpg">
+        <span>8. Sailor Song (Alt)</span>
+        <div class="play"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Reveal -->
+<div class="reveal" id="reveal">
+  <h2>Hey Manasa 💞</h2>
+  <p>Click here</p>
+</div>
+
+<!-- Audio -->
+<audio id="player"></audio>
+
+<div class="now-playing" id="nowPlaying">
+  Currently playing: —
+</div>
+
+<script>
+const songs = [
+  { src:"songs/song1.mp3", name:"Line Without a Hook – Ricky Montgomery" },
+  { src:"songs/song2.mp3", name:"I Wanna Be Yours – Arctic Monkeys" },
+  { src:"songs/song3.mp3", name:"I Think They Call This Love – Matthew Ifield" },
+  { src:"songs/song4.mp3", name:"Sailor Song – Gigi Perez" },
+  { src:"songs/song5.mp3", name:"Golden Brown – The Stranglers" },
+  { src:"songs/song6.mp3", name:"CO2 – Prateek Kuhad" },
+  { src:"songs/song7.mp3", name:"Until I Found You – Stephen Sanchez" },
+  { src:"songs/song8.mp3", name:"Sailor Song (Alt)" }
+];
+
+let currentSongIndex = 0;
+const player = document.getElementById("player");
+const nowPlaying = document.getElementById("nowPlaying");
+
+function openPaper(index){
+  document.getElementById("paper").classList.add("split");
+  document.getElementById("reveal").classList.add("show");
+
+  currentSongIndex = index;
+  playSong();
+}
+
+function playSong(){
+  player.src = songs[currentSongIndex].src;
+  player.play();
+  nowPlaying.textContent =
+    "Currently playing: " + songs[currentSongIndex].name;
+}
+
+player.addEventListener("ended", () => {
+  currentSongIndex++;
+  if(currentSongIndex >= songs.length){
+    currentSongIndex = 0;
+  }
+  playSong();
+});
+</script>
+
+</body>
+</html>
